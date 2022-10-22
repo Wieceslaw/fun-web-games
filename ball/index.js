@@ -4,57 +4,63 @@ const width = canvas.width
 const height = canvas.height
 
 
-const ball = {
-    x: 100,
-    y: 100,
-    radius: 10,
-    color: 'blue',
-    dx: 0,
-    dy: 0,
-    g: 0.5,
-    x_col: false,
-    y_col: false,
-    k: -0.5,
-    draw() {
-      ctx.beginPath()
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true)
-      ctx.closePath()
-      ctx.fillStyle = this.color
-      ctx.fill()
-    },
+class Ball {
+    constructor(name = "ball", x, y, r, color = "blue") {
+        this.name = name
+        this.x = x
+        this.y = y
+        this.r = r
+        this.color = color
+
+        this.dx = 0
+        this.dy = 0
+        this.g = 0.5
+        this.x_col = false
+        this.y_col = false
+        this.k = -0.5
+    }
+
+    draw(ctx) {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true)
+        ctx.closePath()
+        ctx.fillStyle = this.color
+        ctx.fill()
+    }
+
     move() {
         this.dy += this.g
 
         this.x += this.dx
         this.y += this.dy
-    },
+    }
+
     collide() {
         this.x_col = false
         this.y_col = false
-        if (this.x + this.radius > width) {
-            this.x = width - this.radius
+        if (this.x + this.r > width) {
+            this.x = width - this.r
             this.x_col = true
-            this.dx *= this.k
         }
-        if (this.x - this.radius < 0) {
-            this.x = this.radius
+        if (this.x - this.r < 0) {
+            this.x = this.r
             this.x_col = true
-            this.dx *= this.k
         }
-        if (this.y + this.radius > height) {
-            this.y = height - this.radius
+        if (this.y + this.r > height) {
+            this.y = height - this.r
             this.y_col = true
             this.dy *= this.k
         }
-        if (this.y - this.radius < 0) {
-            this.y = this.radius
+        if (this.y - this.r < 0) {
+            this.y = this.r
             this.y_col = true
             this.dy *= this.k
         }
-        // console.log(this.x_col, this.y_col)
     }
-  }
+}
 
+
+const ball = new Ball("ball1", 50, 50, 20)
 
 // canvas.addEventListener('mousemove', event => {
 //     x = event.offsetX
@@ -66,13 +72,7 @@ const ball = {
 document.addEventListener('keydown', (event) => {
     const keyName = event.key;
     const code = event.code
-  
-    // if (keyName === 'w') {
-    //     ball.dy = -5
-    // }
-    // if (keyName === 's') {
-    //     ball.dy = 5
-    // }
+
     if (keyName === 'a') {
         ball.dx = -5
     }
@@ -80,7 +80,6 @@ document.addEventListener('keydown', (event) => {
         ball.dx = 5
     }
     if (code === 'Space' && ball.y_col) {
-        // console.log('jump', ball.dy)
         ball.dy -= 10
         ball.y_col = false
     }
@@ -88,12 +87,7 @@ document.addEventListener('keydown', (event) => {
 
 document.addEventListener('keyup', (event) => {
     const keyName = event.key;
-    // if (keyName === 'w') {
-    //     ball.dy = 0
-    // }
-    // if (keyName === 's') {
-    //     ball.dy = 0
-    // }
+
     if (keyName === 'a') {
         ball.dx = 0
     }
@@ -106,7 +100,7 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ball.move()
     ball.collide()
-    ball.draw()
+    ball.draw(ctx)
     window.requestAnimationFrame(draw)
 }
 
